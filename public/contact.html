@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact / Quick Actions</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif; background: linear-gradient(180deg,#b18cff,#ff9bb3); color: #fff; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
+    .card { background: rgba(255,255,255,0.06); padding:28px; border-radius:16px; text-align:center; box-shadow: 0 8px 30px rgba(0,0,0,0.25); max-width:420px; }
+    a.btn { display:inline-block; margin:10px; padding:14px 20px; border-radius:12px; text-decoration:none; color:#fff; background: rgba(0,0,0,0.2); font-weight:600; }
+    a.call { background: linear-gradient(90deg,#ff7a7a,#ffb3a7); }
+    a.wa { background: linear-gradient(90deg,#7af57a,#39b54a); }
+    p { margin:8px 0 0 0; opacity:0.95; }
+    small { display:block; margin-top:12px; opacity:0.85; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Contact Quick Actions</h1>
+    <p>Click below to call or open WhatsApp</p>
+
+    <!-- TEL: direct link -->
+    <a class="btn call" href="tel:+919009476587">📞 Call +91 90094 76587</a>
+
+    <!-- WhatsApp -->
+    <a class="btn wa" href="https://wa.me/919009476587?text=Hi%20I%20want%20to%20book%20a%20slot" target="_blank" rel="noopener noreferrer">💬 WhatsApp Chat</a>
+
+    <small>Tip: On desktop, tel: behaviour depends on apps installed. Test on phone for best result.</small>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Booking — Patel Studio</title>
+  <style>
+    body{font-family:system-ui,Arial;background:#f7fafc;padding:28px}
+    .card{max-width:680px;margin:0 auto;background:white;padding:20px;border-radius:10px;box-shadow:0 6px 30px rgba(2,6,23,.06)}
+    input,select,textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #e6eef8}
+    button{padding:10px 14px;background:#7c3aed;color:white;border:0;border-radius:8px;cursor:pointer}
+    .result{margin-top:12px;padding:10px;background:#f1f5f9;border-radius:8px}
+    img.qr{width:160px;height:160px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Book Patel Studio — Quick</h2>
+    <div>
+      <input id="name" placeholder="Your name" />
+      <input id="phone" placeholder="Phone" />
+      <input id="email" placeholder="Email (optional)" />
+      <select id="package">
+        <option value="Mini">Mini Shoot</option>
+        <option value="Classic">Classic</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <input id="date" type="date" />
+      <input id="time" type="time" />
+      <button id="bookBtn">Create Booking</button>
+    </div>
+
+    <div id="out" class="result" style="display:none;"></div>
+  </div>
+
+<script>
+  async function createBooking(data){
+    try{
+      const res = await fetch('/api/bookings', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      return await res.json();
+    }catch(e){ return { error: e.message } }
+  }
+
+  document.getElementById('bookBtn').addEventListener('click', async ()=>{
+    const name=document.getElementById('name').value.trim();
+    if(!name) return alert('Name required');
+    const payload = {
+      name,
+      phone: document.getElementById('phone').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      packageName: document.getElementById('package').value,
+      date: document.getElementById('date').value,
+      timeSlot: document.getElementById('time').value
+    };
+    const out = document.getElementById('out');
+    out.style.display='block'; out.innerHTML='Creating booking...';
+    const data = await createBooking(payload);
+    if(data.error){ out.innerHTML = 'Error: '+ (data.error.message || data.error); return; }
+    // show token, link, and QR (generate via /api/qr/generate)
+    const link = data.url || (`/gallery.html?token=${data.qrToken}`);
+    out.innerHTML = `
+      <div><strong>Booking created!</strong></div>
+      <div>Booking ID: ${data.bookingId || ''}</div>
+      <div>Token: <code>${data.qrToken}</code></div>
+      <div style="margin-top:8px;"><a href="${link}" target="_blank">Open gallery</a></div>
+      <div id="qrWrap" style="margin-top:12px">Generating QR...</div>
+    `;
+    // request QR image from backend
+    try{
+      const r = await fetch('/api/qr/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ url: window.location.origin + '/gallery.html?token=' + data.qrToken })});
+      const jr = await r.json();
+      if(jr.qrDataUrl) document.getElementById('qrWrap').innerHTML = '<img class="qr" src="'+jr.qrDataUrl+'" alt="qr" />';
+      else document.getElementById('qrWrap').textContent = 'QR not generated';
+    }catch(e){
+      document.getElementById('qrWrap').textContent = 'QR error';
+    }
+  });
+</script>
+</body>
+</html>

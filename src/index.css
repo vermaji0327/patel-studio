@@ -1,0 +1,223 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Romantic Photography Studio Theme */
+    --background: 340 60% 98%;
+    --foreground: 280 20% 10%;
+
+    --card: 340 45% 97%;
+    --card-foreground: 280 20% 10%;
+
+    --popover: 340 60% 98%;
+    --popover-foreground: 280 20% 10%;
+
+    /* Royal Purple - Primary Brand */
+    --primary: 263 100% 60%;
+    --primary-foreground: 340 60% 98%;
+
+    /* Pastel Pink - Romance */
+    --secondary: 340 100% 91%;
+    --secondary-foreground: 280 20% 10%;
+
+    /* Rose Gold - Luxury Accent */
+    --accent: 15 45% 72%;
+    --accent-foreground: 280 20% 10%;
+
+    /* Baby Lavender - Soft Backgrounds */
+    --muted: 270 60% 93%;
+    --muted-foreground: 280 20% 45%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 340 60% 98%;
+
+    --border: 340 40% 90%;
+    --input: 340 40% 92%;
+    --ring: 263 100% 60%;
+
+    --radius: 1rem;
+    
+    /* Custom romantic colors */
+    --romantic-pink: 340 100% 91%;
+    --soft-lavender: 270 60% 93%;
+    --rose-gold: 15 45% 72%;
+    --royal-purple: 263 100% 60%;
+    --deep-black: 280 20% 10%;
+    --soft-white: 340 60% 98%;
+    
+    /* Magical gradients */
+    --gradient-romantic: linear-gradient(135deg, hsl(340 100% 91%) 0%, hsl(263 100% 60%) 50%, hsl(15 45% 72%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(280 20% 10% / 0.7) 0%, hsl(263 100% 60% / 0.3) 100%);
+    --gradient-glow: radial-gradient(circle, hsl(263 100% 60% / 0.3) 0%, transparent 70%);
+    
+    /* Premium shadows */
+    --shadow-romantic: 0 10px 40px -10px hsl(263 100% 60% / 0.3);
+    --shadow-glow: 0 0 40px hsl(263 100% 60% / 0.4), 0 0 80px hsl(340 100% 91% / 0.2);
+    --shadow-elegant: 0 20px 60px -15px hsl(280 20% 10% / 0.25);
+    
+    /* Smooth transitions */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Mode - Purple Rose Gold Luxury */
+    --background: 280 30% 8%;
+    --foreground: 340 60% 98%;
+
+    --card: 280 25% 12%;
+    --card-foreground: 340 60% 98%;
+
+    --popover: 280 30% 8%;
+    --popover-foreground: 340 60% 98%;
+
+    --primary: 263 100% 70%;
+    --primary-foreground: 280 30% 8%;
+
+    --secondary: 340 80% 40%;
+    --secondary-foreground: 340 60% 98%;
+
+    --muted: 280 20% 20%;
+    --muted-foreground: 340 40% 70%;
+
+    --accent: 15 60% 60%;
+    --accent-foreground: 340 60% 98%;
+
+    --destructive: 0 62.8% 40.6%;
+    --destructive-foreground: 340 60% 98%;
+
+    --border: 280 20% 20%;
+    --input: 280 20% 20%;
+    --ring: 263 100% 70%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  em {
+    font-style: normal;
+  }
+}
+
+@layer utilities {
+  /* Romantic animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+  
+  .animate-heart-beat {
+    animation: heartBeat 1.5s ease-in-out infinite;
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    background: var(--gradient-romantic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glass morphism */
+.glass {
+  background: hsl(var(--background) / 0.7);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+.glass-dark {
+  background: hsl(var(--deep-black) / 0.5);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+  
+  /* Premium hover effects */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-romantic);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(0.9);
+  }
+  20%, 40% {
+    transform: scale(1.1);
+  }
+}

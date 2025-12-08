@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gallery Viewer</title>
+
+<!-- JSZip for client-side zip (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+  body{font-family:Inter,system-ui,Arial,sans-serif;background:#f5f7fb;margin:0;padding:24px}
+  .top {display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto 18px}
+  .title{font-size:20px;font-weight:600}
+  .controls {display:flex;gap:8px}
+  .btn{background:#2563eb;color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+  .btn.secondary{background:#111827}
+  .container{max-width:1100px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .card{background:white;border-radius:8px;padding:8px;box-shadow:0 4px 14px rgba(2,6,23,0.08);display:flex;flex-direction:column;align-items:center}
+  .card img{width:100%;height:160px;object-fit:cover;border-radius:6px;cursor:pointer}
+  .meta{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px}
+  .filename{color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:70%}
+  .download{background:#10b981;padding:6px 8px;border-radius:6px;color:white;border:0;cursor:pointer}
+
+  /* Fullscreen modal */
+  .modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:999;visibility:hidden;opacity:0;transition:opacity .18s}
+  .modal.show{visibility:visible;opacity:1}
+  .modal-content{background:#0b1220;padding:12px;border-radius:10px;max-width:95%;max-height:95%;display:flex;flex-direction:column;align-items:center}
+  .modal img{max-width:90vw;max-height:75vh;border-radius:6px}
+  .modal .nav{display:flex;gap:8px;margin-top:10px}
+  .small{font-size:13px;color:#cbd5e1}
+  .loader{padding:12px;color:#94a3b8}
+</style>
+</head>
+<body>
+
+<div class="top container">
+  <div class="title">📸 Photo Gallery</div>
+  <div class="controls">
+    <input id="tokenInput" placeholder="Enter token / paste here" style="padding:8px;border-radius:8px;border:1px solid #e6eef8" />
+    <button id="loadBtn" class="btn">Load</button>
+    <button id="downloadAll" class="btn secondary">Download All (ZIP)</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="status" class="small" style="margin-bottom:8px;color:#374151">Enter token and click Load — images will appear below.</div>
+  <div id="grid" class="grid"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal" role="dialog" aria-hidden="true">
+  <div class="modal-content">
+    <img id="modalImg" src="" alt="full" />
+    <div id="caption" class="small" style="margin-top:8px;color:#cbd5e1"></div>
+    <div class="nav">
+      <button id="prev" class="btn">Prev</button>
+      <button id="next" class="btn">Next</button>
+      <button id="downloadCurrent" class="download">Download</button>
+      <button id="close" class="btn secondary">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(async ()=>{
+
+  const apiBase = window.location.origin;
+
+  const qs = new URLSearchParams(location.search);
+  const tokenParam = qs.get('token');
+  const tokenInput = document.getElementById('tokenInput');
+  const loadBtn = document.getElementById('loadBtn');
+  const grid = document.getElementById('grid');
+  const status = document.getElementById('status');
+  const downloadAllBtn = document.getElementById('downloadAll');
+
+  const modal = document.getElementById('modal');
+  const modalImg = document.getElementById('modalImg');
+  const caption = document.getElementById('caption');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const closeBtn = document.getElementById('close');
+  const downloadCurrentBtn = document.getElementById('downloadCurrent');
+
+  let photos = [];
+  let currentIndex = 0;
+
+  if(tokenParam) tokenInput.value = tokenParam;
+
+  loadBtn.addEventListener('click', () => {
+    const t = tokenInput.value.trim();
+    if(!t){ alert('Enter token'); return; }
+    loadGallery(t);
+  });
+
+  async function loadGallery(token){
+    try{
+      status.textContent = 'Loading...';
+      grid.innerHTML = '';
+      photos = [];
+      currentIndex = 0;
+
+      const res = await fetch(`${apiBase}/api/galleries/${encodeURIComponent(token)}`);
+      if(!res.ok){
+        const txt = await res.text();
+        status.textContent = `Error: ${res.status} ${res.statusText} — ${txt.slice(0,200)}`;
+        return;
+      }
+      const data = await res.json();
+      if(!data.photos || !data.photos.length){
+        status.textContent = 'No photos found for this token.';
+        return;
+      }
+
+      photos = data.photos;
+      status.textContent = `Loaded ${photos.length} photos. Click any image to view.`;
+
+      photos.forEach((p, i) => {
+        const c = document.createElement('div'); c.className='card';
+        const img = document.createElement('img'); img.src = p.url; img.alt = p.filename;
+        img.loading = 'lazy';
+        img.onclick = ()=> openModal(i);
+        const meta = document.createElement('div'); meta.className='meta';
+        const name = document.createElement('div'); name.className='filename'; name.textContent = p.filename;
+        const dl = document.createElement('button'); dl.className='download'; dl.textContent='Download';
+        dl.onclick = (ev)=>{ ev.stopPropagation(); downloadUrl(p.url, p.filename); }
+        meta.appendChild(name); meta.appendChild(dl);
+        c.appendChild(img); c.appendChild(meta); grid.appendChild(c);
+      });
+
+    }catch(err){
+      console.error(err);
+      status.textContent = 'Error loading gallery. See console.';
+    }
+  }
+
+  // Modal controls
+  function openModal(index){
+    currentIndex = index;
+    const p = photos[currentIndex];
+    modalImg.src = p.url;
+    caption.textContent = p.filename;
+    modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+  function next(){ currentIndex = (currentIndex+1)%photos.length; openModal(currentIndex); }
+  function prev(){ currentIndex = (currentIndex-1+photos.length)%photos.length; openModal(currentIndex); }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+
+  // Download helpers
+  async function downloadUrl(url, filename){
+    try{
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }catch(e){
+      console.error('download error', e);
+    }
+  }
+
+  downloadCurrentBtn.addEventListener('click', ()=> {
+    const p = photos[currentIndex];
+    downloadUrl(p.url, p.filename);
+  });
+
+  // Download all (client-side zip)
+  downloadAllBtn.addEventListener('click', async ()=>{
+    if(!photos.length) return alert('No photos');
+    downloadAllBtn.disabled = true;
+    downloadAllBtn.textContent = 'Zipping...';
+    try{
+      const zip = new JSZip();
+      const folder = zip.folder('gallery');
+      for(const p of photos){
+        // fetch binary
+        const resp = await fetch(p.url);
+        const blob = await resp.blob();
+        folder.file(p.filename, blob);
+      }
+      const content = await zip.generateAsync({type:'blob'});
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gallery_${Date.now()}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }catch(e){
+      console.error(e);
+      alert('Failed to zip images (CORS or network issue).');
+    }finally{
+      downloadAllBtn.disabled = false;
+      downloadAllBtn.textContent = 'Download All (ZIP)';
+    }
+  });
+
+  // Auto-load if token param present
+  if(tokenParam) loadGallery(tokenParam);
+
+})();
+</script>
+
+</body>
+</html>
+
