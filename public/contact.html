@@ -1,32 +1,131 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contact / Quick Actions</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif; background: linear-gradient(180deg,#b18cff,#ff9bb3); color: #fff; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-    .card { background: rgba(255,255,255,0.06); padding:28px; border-radius:16px; text-align:center; box-shadow: 0 8px 30px rgba(0,0,0,0.25); max-width:420px; }
-    a.btn { display:inline-block; margin:10px; padding:14px 20px; border-radius:12px; text-decoration:none; color:#fff; background: rgba(0,0,0,0.2); font-weight:600; }
-    a.call { background: linear-gradient(90deg,#ff7a7a,#ffb3a7); }
-    a.wa { background: linear-gradient(90deg,#7af57a,#39b54a); }
-    p { margin:8px 0 0 0; opacity:0.95; }
-    small { display:block; margin-top:12px; opacity:0.85; font-size:13px; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>Contact Quick Actions</h1>
-    <p>Click below to call or open WhatsApp</p>
+// src/components/PricingSection.tsx (SIMPLIFIED for Direct WhatsApp Contact)
 
-    <!-- TEL: direct link -->
-    <a class="btn call" href="tel:+919009476587">📞 Call +91 90094 76587</a>
+import { motion } from "framer-motion";
+import { Sparkles, ChevronRight } from "lucide-react";
 
-    <!-- WhatsApp -->
-    <a class="btn wa" href="https://wa.me/919009476587?text=Hi%20I%20want%20to%20book%20a%20slot" target="_blank" rel="noopener noreferrer">💬 WhatsApp Chat</a>
+// --- Catalogue Data (Same as before) ---
+// Note: Is baar hum 'name' aur 'price' ko WhatsApp message mein use karenge.
+const catalogueItems = [
+    { 
+        name: "BRIDE SHOOT", 
+        price: "₹21,000.00", 
+        description: "NORMAL TRADITIONAL PHOTOGRAPHY ND VIDEOGRAPHY JUST A NORMAL SHOOT", 
+        image: "IMG-20251209-WA0005.jpg"
+    },
+    { 
+        name: "PRE-WEDDING SHOOT", 
+        price: "₹45,000.00", 
+        description: "10 SHEET ALBUM", 
+        image: "IMG-20251209-WA0003.jpg"
+    },
+    { 
+        name: "WEDDING PHOTOGRAPHY", 
+        price: "₹50,000.00", 
+        description: "ONLY TRADITIONAL", 
+        image: "IMG-20251209-WA0006.jpg"
+    },
+    { 
+        name: "Candid", 
+        price: "₹60,000.00", 
+        description: "ALL WEDDING DAYS CANDID SHOTS", 
+        image: "IMG-20251209-WA0046.jpg"
+    },
+    // ... baaki items yahan add karein, jaisa maine pichle response mein diya tha.
+    // Maine yahan sirf 4 examples rakhe hain for brevity.
+];
 
-    <small>Tip: On desktop, tel: behaviour depends on apps installed. Test on phone for best result.</small>
-  </div>
-</body>
-</html>
+// Photographer ka WhatsApp number
+const WHATSAPP_NUMBER = '919009476587';
 
+// --- Function to generate WhatsApp link ---
+const generateWhatsAppLink = (itemName, itemPrice) => {
+    const message = encodeURIComponent(`Hi, I'm interested in booking the *${itemName}* package for ${itemPrice}. Please share the detailed availability and next steps.`);
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+};
+
+
+export const PricingSection = () => {
+    return (
+        <section className="py-24 px-6 bg-gradient-to-br from-romantic-purple/10 via-background to-romantic-gold/10 relative overflow-hidden">
+            <div className="container mx-auto max-w-7xl relative z-10">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-16"
+                >
+                    <h2 className="font-heading text-4xl md:text-6xl font-bold text-foreground mb-4">
+                        📸 Our Service Catalogue
+                    </h2>
+                    <p className="font-body text-xl text-muted-foreground">
+                        Apni pasand ki service dekhein aur direct WhatsApp par book karein.
+                    </p>
+                </motion.div>
+
+                {/* Catalogue Grid */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                    {catalogueItems.map((item, index) => (
+                        <motion.a // Direct link (<a> tag used instead of <div>)
+                            key={item.name}
+                            href={generateWhatsAppLink(item.name, item.price)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1, duration: 0.5 }}
+                            whileHover={{ y: -5, scale: 1.02 }}
+                            className="glass cursor-pointer rounded-xl p-4 border border-border flex items-center gap-4 transition-all duration-300 hover:border-romantic-gold/80 hover:shadow-[0_0_20px_rgba(218,164,154,0.3)] group"
+                        >
+                            {/* Catalogue Style Image (Left) */}
+                            <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                                
+                            </div>
+                            
+                            {/* Details (Center) */}
+                            <div className="flex-grow text-left">
+                                <h3 className="font-heading text-lg font-bold text-foreground truncate group-hover:text-romantic-purple">
+                                    {item.name}
+                                </h3>
+                                <p className="font-body text-sm text-romantic-gold font-semibold">
+                                    {item.price}
+                                </p>
+                                <p className="font-body text-xs text-muted-foreground truncate">
+                                    {item.description}
+                                </p>
+                            </div>
+                            
+                            {/* WhatsApp Icon (Right) */}
+                            <motion.div
+                                initial={{ x: 0 }}
+                                whileHover={{ x: 5 }}
+                                className="flex-shrink-0 text-romantic-gold"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </motion.div>
+                        </motion.a>
+                    ))}
+                </motion.div>
+                
+                {/* Optional: Add a general contact section below the catalogue */}
+                <div className="text-center mt-12">
+                     <p className="font-body text-lg text-foreground mb-4">
+                        Ya fir sidha call karein:
+                    </p>
+                     <a className="bg-romantic-purple hover:bg-romantic-purple/80 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300" href="tel:+919009476587">
+                        📞 Call Now
+                    </a>
+                </div>
+
+            </div>
+            {/* Background elements, agar aapne use kiye hain */}
+            <Sparkles className="absolute top-1/4 left-10 w-32 h-32 text-romantic-gold/20 animate-spin-slow" />
+            <Sparkles className="absolute bottom-1/4 right-10 w-40 h-40 text-romantic-purple/20 animate-spin-slow" />
+        </section>
+    );
+};
