@@ -5,6 +5,8 @@ import { Phone, MessageCircle, Sparkles } from "lucide-react";
 /**
  * CTASection — named export AND default export
  * Uses your number: +91 90094 76587
+ * Email: tarun1682verma@gmail.com
+ * Instagram: patel_photography_0327
  */
 export const CTASection: React.FC = () => {
   const PHONE = "+919009476587";
@@ -155,16 +157,7 @@ export const CTASection: React.FC = () => {
               WhatsApp Book
             </button>
 
-            <button
-              onClick={(e) => handleContactPage(e, true)}
-              aria-label="Contact page"
-              className="inline-flex items-center gap-3 px-10 h-16 text-lg font-semibold rounded-2xl
-                         bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 text-white
-                         shadow-[0_10px_30px_rgba(139,92,246,0.14)] hover:scale-105 active:scale-95
-                         transition-transform duration-300 focus:outline-none focus:ring-4 focus:ring-purple-200"
-            >
-              Contact Page
-            </button>
+            
           </motion.div>
 
           <motion.div
@@ -175,7 +168,61 @@ export const CTASection: React.FC = () => {
             className="mt-12 glass-dark p-8 rounded-2xl inline-block"
           >
             <p className="font-cursive text-3xl text-white mb-2">Today Only Special Offer</p>
-            <p className="font-body text-lg text-white/80">Free T-shirt + Mug + Frame on Any Booking! 🎁</p>
+            <p className="font-body text-lg text-white/80">Free Frame on Any Booking! 🎁</p>
+          </motion.div>
+
+          {/* ---- FOOTER SECTION ---- */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.75 }}
+            className="mt-12 w-full flex flex-col items-center"
+          >
+            <div className="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20">
+              <h3 className="text-white text-2xl font-semibold mb-6 text-center">
+                Contact & Social Links
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white/90 text-center">
+                <div>
+                  <p className="text-lg font-medium">Email</p>
+                  <a
+                    href="mailto:tarun1682verma@gmail.com"
+                    className="text-white hover:underline"
+                  >
+                    Tarun1682verma@gmail.com
+                  </a>
+                </div>
+
+                <div>
+                  <p className="text-lg font-medium">Phone</p>
+                  <a
+                    href="tel:+919009476587"
+                    className="text-white hover:underline"
+                  >
+                    +91 90094 76587
+                  </a>
+                </div>
+
+                <div>
+                  <p className="text-lg font-medium">Instagram</p>
+                 <a
+  href="https://instagram.com/patel_photography_0"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-white hover:underline"
+>
+  @patel_photography_0
+</a>
+
+                </div>
+              </div>
+
+              <p className="text-center text-white/70 mt-6 text-sm">
+                © {new Date().getFullYear()} Patel Photography — All Rights Reserved.
+              </p>
+            </div>
           </motion.div>
         </motion.div>
       </div>
